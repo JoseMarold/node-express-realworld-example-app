@@ -401,6 +401,12 @@ export const deleteArticle = async (slug: string, id: number) => {
     throw new HttpException(404, {});
   }
   
+  if (existingArticle.author.id !== id) {
+    throw new HttpException(403, {
+      message: 'You are not authorized to delete this article'
+    });
+  }
+
   await prisma.article.delete({
     where: {
       slug,
