@@ -239,11 +239,32 @@ export const createArticle = async (article: any, id: number) => {
 };
 
 export const getArticle = async (slug: string, id?: number) => {
-  const query = `SELECT * FROM "Article" WHERE slug = '${slug}' LIMIT 1`;
-  
-  const articles = await prisma.$queryRawUnsafe(query);
-
-  const article = articles[0] || null;
+  const article = await prisma.article.findUnique({
+    where: {
+      slug,
+    },
+    include: {
+      tagList: {
+        select: {
+          name: true,
+        },
+      },
+      author: {
+        select: {
+          username: true,
+          bio: true,
+          image: true,
+          followedBy: true,
+        },
+      },
+      favoritedBy: true,
+      _count: {
+        select: {
+          favoritedBy: true,
+        },
+      },
+    },
+  });
 
   if (!article) {
     throw new HttpException(404, { errors: { article: ['not found'] } });
