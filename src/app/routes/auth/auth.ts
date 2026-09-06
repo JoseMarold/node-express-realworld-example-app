@@ -11,14 +11,20 @@ const getTokenFromHeaders = (req: express.Request): string | null => {
   return null;
 };
 
+const secret = process.env.JWT_SECRET;
+
+if (!secret){
+  throw new Error('JWT_SECRET not configured');
+}
+
 const auth = {
   required: jwt({
-    secret: process.env.JWT_SECRET || 'superSecret',
+    secret: secret,
     getToken: getTokenFromHeaders,
     algorithms: ['HS256'],
   }),
   optional: jwt({
-    secret: process.env.JWT_SECRET || 'superSecret',
+    secret: secret,
     credentialsRequired: false,
     getToken: getTokenFromHeaders,
     algorithms: ['HS256'],

@@ -20,6 +20,8 @@ export const getProfile = async (usernamePayload: string, id?: number) => {
 };
 
 export const followUser = async (usernamePayload: string, id: number) => {
+  console.log('usernamePayload:', usernamePayload);
+  console.log('id recibido:', id);
   const profile = await prisma.user.update({
     where: {
       username: usernamePayload,

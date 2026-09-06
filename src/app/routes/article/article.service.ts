@@ -270,7 +270,7 @@ export const getArticle = async (slug: string, id?: number) => {
     throw new HttpException(404, { errors: { article: ['not found'] } });
   }
 
-  return articleMapper(article, id);
+  return article;
 };
 
 const disconnectArticlesTags = async (slug: string) => {
@@ -400,16 +400,23 @@ export const deleteArticle = async (slug: string, id: number) => {
   if (!existingArticle) {
     throw new HttpException(404, {});
   }
-
+  
   if (existingArticle.author.id !== id) {
     throw new HttpException(403, {
-      message: 'You are not authorized to delete this article',
+      message: 'You are not authorized to delete this article'
     });
   }
+
   await prisma.article.delete({
     where: {
       slug,
     },
+  });
+};
+
+export const deleteArticleAdminRoute = async (slug: string) => {
+  await prisma.article.delete({
+    where: { slug: slug },
   });
 };
 
