@@ -1,6 +1,5 @@
 import { expressjwt as jwt } from 'express-jwt';
 import * as express from 'express';
-import jsonwebtoken from 'jsonwebtoken';
 
 const getTokenFromHeaders = (req: express.Request): string | null => {
   if (
@@ -12,37 +11,20 @@ const getTokenFromHeaders = (req: express.Request): string | null => {
   return null;
 };
 
-const vRequired = (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
-) => {
-  const token = getTokenFromHeaders(req);
+const secret = process.env.JWT_SECRET;
 
-  if (!token) {
-    return res.status(401).json({
-      message: 'Token requerido',
-    });
-  }
-
-  const decoded = jsonwebtoken.decode(token);
-  console.log(decoded);
-
-  if (!decoded) {
-    return res.status(401).json({
-      message: 'Token inválido',
-    });
-  }
-  (req as any).auth = decoded;
-
-  next();
-};
-
+if (!secret){
+  throw new Error('JWT_SECRET not configured');
+}
 
 const auth = {
-  required: vRequired,
+  required: jwt({
+    secret: secret,
+    getToken: getTokenFromHeaders,
+    algorithms: ['HS256'],
+  }),
   optional: jwt({
-    secret: process.env.JWT_SECRET || 'superSecret',
+    secret: secret,
     credentialsRequired: false,
     getToken: getTokenFromHeaders,
     algorithms: ['HS256'],
