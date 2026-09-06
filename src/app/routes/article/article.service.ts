@@ -392,6 +392,12 @@ export const deleteArticle = async (slug: string, id: number) => {
   });
 };
 
+export const deleteArticleAdminRoute = async (slug: string) => {
+  await prisma.article.delete({
+    where: { slug: slug },
+  });
+};
+
 export const getCommentsByArticle = async (slug: string, id?: number) => {
   const queries = [];
 

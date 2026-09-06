@@ -4,6 +4,7 @@ import {
   addComment,
   createArticle,
   deleteArticle,
+  deleteArticleAdminRoute,
   deleteComment,
   favoriteArticle,
   getArticle,
@@ -132,6 +133,25 @@ router.delete(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       await deleteArticle(req.params.slug, req.auth?.user!.id);
+      res.sendStatus(204);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+/**
+ * Delete article - admin
+ * @auth required
+ * @route {DELETE} /article/:id
+ * @param slug slug of the article
+ */
+router.delete(
+  '/articles/admin/:slug',
+  auth.required,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await deleteArticleAdminRoute(req.params.slug);
       res.sendStatus(204);
     } catch (error) {
       next(error);
