@@ -14,6 +14,7 @@ import {
   unfavoriteArticle,
   updateArticle,
 } from './article.service';
+import { requireAdmin } from '../auth/rbac.middleware'; 
 
 const router = Router();
 
@@ -149,6 +150,7 @@ router.delete(
 router.delete(
   '/articles/admin/:slug',
   auth.required,
+  requireAdmin,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       await deleteArticleAdminRoute(req.params.slug);
